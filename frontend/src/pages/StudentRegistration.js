@@ -227,7 +227,7 @@ export default function StudentRegisdivation() {
 
 
         <div id="IncomeDetails" className="tabcontent  RegisdivationContent">
-          <form onSubmit={onSubmit} >
+          <form onChange={onSubmit} >
             <div className='table'>
 
 
@@ -305,7 +305,7 @@ export default function StudentRegisdivation() {
 
 
         <div id="EducationDetails" className="tabcontent RegisdivationContent">
-          <form onSubmit={onSubmit} >
+          <form onChange={onSubmit} >
             <div className='table'>
               <label>10th details</label>
               <div className='row flex'>
@@ -384,7 +384,7 @@ export default function StudentRegisdivation() {
 
 
         <div id='CurrentCourseDetails' className="tabcontent  RegisdivationContent ">
-          <form onSubmit={onSubmit} >
+          <form onChange={onSubmit} >
             <div className='table'>
 
 
