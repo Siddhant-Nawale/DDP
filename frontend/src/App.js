@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
-  Switch,
+  // Switch,
+  Routes,
   Route,
   useLocation
 } from "react-router-dom";
@@ -11,8 +12,10 @@ import Invokesch from './pages/Invokesch';
 import Enroll from './pages/Enroll';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Login from './pages/Login';
 import StudentRegistration from './pages/StudentRegistration'
-
+import StuDashboard from './pages/StuDashboard'
+import StudentUpdateData from './pages/Student_UpdateData'
 
 function App() {
   const useScrollToTop = () => {
@@ -27,29 +30,37 @@ function App() {
   //console.log(account);
   return (
     <div className="App">
-        <Router >
-			<Switch>
-        <Route exact path="/">
-          <Home useScrollToTop={useScrollToTop}/>
-        </Route>
-        <Route exact path="/StudentRegistration">
-          <StudentRegistration useScrollToTop={useScrollToTop}/>
-        </Route>
-        
-				<Route exact path="/invokecsr">
-					<Invokecsr useScrollToTop={useScrollToTop} />
-				</Route>
-        <Route exact path="/invokesch">
-					<Invokesch useScrollToTop={useScrollToTop} />
-				</Route>
-        <Route exact path="/enroll">
-					<Enroll useScrollToTop={useScrollToTop} />
-				</Route>
-        <Route exact path="/register">
-					<Register useScrollToTop={useScrollToTop} />
-				</Route>
-			</Switch>
-        </Router>
+      <Router>
+        <Routes>
+          <Route exact path="/" element={
+            <Home useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/StudentRegistration" element=
+            {<StudentRegistration useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/Login" element=
+            {<Login useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/StudentDashboard"  element=
+            {<StuDashboard useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/StudentUpdateData"  element=
+            {<StudentUpdateData useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/invokecsr"  element=
+            {<Invokecsr useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/invokesch"  element=
+            {<Invokesch useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/enroll"  element=
+            {<Enroll useScrollToTop={useScrollToTop} />}
+          />
+          <Route exact path="/register"  element=
+            {<Register useScrollToTop={useScrollToTop} />}
+          />
+        </Routes>
+      </Router>
     </div>
   );
 }

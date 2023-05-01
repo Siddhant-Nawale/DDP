@@ -17,7 +17,9 @@ body::-webkit-scrollbar {
 }
 
 
-
+a:hover {
+	transform: translateY(-2px);
+}
 .test_border{
     border: red solid 4px;
 	/* background-color: antiquewhite; */
@@ -646,14 +648,140 @@ h1 {
    font-family: Arial;
    text-align: center;
 }
-.RegistrationContent.submitButton{
+.RegistrationContentSubmitButton{
 	/* align-self: center; */
 	/* align-items: center; */
-	justify-items: center;
-	align-self: center;
-	align-items: center;
-	margin-top: 2vh;
+	/* display: flex; */
+	position: relative;
+	/* justify-items: center; */
+	/* align-self: center; */
+	/* align-items: center; */
+	/* align-content: center; */
+	/* margin-top: 2vh; */
 	margin: 2px;
 }
-
+.RegistrationContentSubmitButton div{
+	margin-left: 70%;
+}
+.mainformStudentRegistration{
+	border: 1px solid #ccc;
+}
+.ReturnUserNameCheck{
+	color: red;
+}
 /*/////////////// StuReg_Section1 end ////////////////////*/
+
+
+
+
+/*///////////////Login///////////////////////*/
+
+
+.Login .container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.Login .logo img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 30px;
+}
+
+.Login .login-form {
+  background-color: #ffffff;
+  padding: 30px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.Login .login-form h1 {
+  margin-top: 0;
+}
+
+.Login form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Login label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.Login input[type="text"],
+.Login input[type="password"] {
+  padding: 10px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.Login input[type="submit"] {
+  background-color: #3498db;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.Login input[type="submit"]:hover {
+  background-color: #2980b9;
+}
+
+.Login .forgot-password {
+  margin-top: 10px;
+}
+
+.Login .forgot-password a {
+  color: #aaaaaa;
+  text-decoration: none;
+}
+
+.Login .forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.Login .sign-up {
+  margin-top: 30px;
+  color: #aaaaaa;
+  text-align: center;
+}
+
+.Login .sign-up a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.Login .sign-up a:hover {
+  text-decoration: underline;
+}
+
+
+
+/*/////////////// Login end ////////////////////*/
+
+
+
+
+/*///////////////StudentDashboardBody///////////////////////*/
+
+.mainStudentDashboardBody{
+	min-height: 70vh;
+	padding-top: 10vh;
+}
+
+
+/*/////////////// StudentDashboardBody end ////////////////////*/
+
+
+
+
+/*///////////////Login///////////////////////*/

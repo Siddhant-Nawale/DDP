@@ -204,7 +204,7 @@ $(document).ready(function () {
                   </div>
                   Lets Go Login
                   <div className=''>
-                    <Link to="/Charity"><button className='navbar_SpecialButton_right_border b1 bg-[#E32952] py-2 pr-4 pl-4  rounded-l-full cursor-pointer hover:bg-[#2546bd] text-white'>Student</button></Link>
+                    <Link to="/Login"><button className='navbar_SpecialButton_right_border b1 bg-[#E32952] py-2 pr-4 pl-4  rounded-l-full cursor-pointer hover:bg-[#2546bd] text-white'>Student</button></Link>
                     <Link to="/Charity"><button className='b1 bg-[#E32952] py-2 pr-4 pl-2  rounded-r-full cursor-pointer hover:bg-[#2546bd] text-white'>Donor</button></Link>
                   </div>
                 </div>

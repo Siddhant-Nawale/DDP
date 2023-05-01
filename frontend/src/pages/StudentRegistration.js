@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import './SecondaryCSS.css';
+import { addDoc, getDocs, collection, query, where } from "@firebase/firestore"
+import { firestore } from "./firebase_setup"
+
 // import { HiMenuAlt4 } from "react-icons/";
 // import { AiOutlineClose } from "react-icons/ai";
 import { Link } from 'react-router-dom';
@@ -11,11 +14,12 @@ import Footer from './Footer';
 import validator from 'validator'
 
 
-export default function StudentRegisdivation() {
+export default function StudentRegistration() {
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [])
+  const [userNameCheck,setUserNameCheck] = useState(0);
 
   const [Studentdetials, setStudentdetials] = useState({
     StudentFirstName: '',
@@ -24,6 +28,8 @@ export default function StudentRegisdivation() {
     Student_MailID: '',
     Student_DOB: '',
     Student_Gender: '',
+    Student_UserName: '',
+    StudentLogingPassword: '',
 
     // Grp1: '',
     // Student_IncomeCirtificateYes: '',
@@ -76,14 +82,50 @@ export default function StudentRegisdivation() {
     }
   }
 
-  const onSubmit = async (e) => {
+  const Handleonchange = async (e) => {
     e.preventDefault();
+
+
+
+
     setStudentdetials({
       ...Studentdetials, [e.target.name]: e.target.value
     })
-    console.log(Studentdetials)
-    return false;
+    // console.log(Studentdetials)
+    // return false;
   }
+
+  const handlesubmit = (e) => {
+    e.preventDefault();
+
+    const isStudentDetailsValid = Object.values(Studentdetials).every(val => val !== '');
+    // console.log(isStudentDetailsValid , userNameCheck);
+    // console.log((isStudentDetailsValid && userNameCheck));
+    if (isStudentDetailsValid && !userNameCheck) {
+      const refreg = collection(firestore, "StudentData") 
+      // const docRef = doc(firestore, "StudentData", "sid");
+      const reflogin = collection(firestore, "StudentData")
+      let dataReg =
+        Studentdetials
+
+      let datalogin =
+        {Student_UserName:'',
+        StudentLogingPassword:''
+      // UserType:''
+    }
+    datalogin.Student_UserName = Studentdetials.Student_UserName
+    datalogin.StudentLogingPassword = Studentdetials.StudentLogingPassword
+
+      console.log(data)
+      try {
+        addDoc(refreg, dataReg)
+        addDoc(reflogin, datalogin)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
 
   function clickHandle(evt, Name) {
     let i, tabcontent, tablinks;
@@ -104,6 +146,39 @@ export default function StudentRegisdivation() {
     // console.log(document.getElementById(Name));
     document.getElementById(Name).style.display = "flex"
     // document.getElementById(Name).classList.add("mystyle");
+  }
+
+
+
+  const onChangeUserNameCheck = async (e) =>{
+    // console.log("e.val",e.target.value)
+    // Handleonchange(e)
+    // setStudentdetials({[Student_UserName]:e.target.value})
+    // console.log("Studentdetials",Studentdetials)
+
+    const usersRef = collection(firestore, 'LoginCred');
+    // console.log(Studentdetials.userName)
+    const q = query(usersRef, where('UserName', '==', e.target.value));
+
+    // const userDoc = doc(usersRef, username);
+    const querySnapshot = await getDocs(q);
+    // var userData ;
+    // console.log("query",q);
+    // console.log("querySnapshot.size",querySnapshot.size)
+    if (querySnapshot.size === 0) {
+      setUserNameCheck(0)
+      // console.log(userNameCheck)
+    } else {
+      setUserNameCheck(1)
+      // console.log(userNameCheck)
+
+    }
+  }
+
+
+  const ReturnUserNameCheck = ()=>{if(userNameCheck===1){
+    // console.log("userNameCheck",userNameCheck)
+    return("UserName Already Taken");}
   }
 
   return (
@@ -149,7 +224,7 @@ export default function StudentRegisdivation() {
       <section className='StuReg_Section1 '>
         <div className='heading '>
           <p className='p1'>
-            Student Regisdivation
+            Student Registration
           </p>
         </div>
         <hr />
@@ -161,289 +236,318 @@ export default function StudentRegisdivation() {
           <button className="tablinks" onClick={event => clickHandle(event, 'EducationDetails')}>Education Details</button>
           <button className="tablinks" onClick={event => clickHandle(event, 'CurrentCourseDetails')}>Current Course</button>
         </div>
+        <form className='mainformStudentRegistration' onSubmit={handlesubmit} onChange={Handleonchange} >
+          <div id="PersonalDetails" className="tabcontent activecontent RegisdivationContent">
+            <div  >
+              <div className='table'>
 
-        <div id="PersonalDetails" className="tabcontent activecontent RegisdivationContent">
-          <form onChange={onSubmit} >
-            <div className='table'>
 
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>First Name :</label><br />
+                    <input type="text" placeholder="First Name" name="StudentFirstName" id='Student_FirstName' />
+                  </div>
 
-              <div className='row flex'>
-                <div className='col'>
-                  <label>First Name :</label><br />
-                  <input type="text" placeholder="First Name" name="StudentFirstName" id='Student_FirstName' />
+                  <div className='col'>
+                    <label>Father's Name :</label><br />
+                    <input type="text" placeholder="Father's Name" name="Student_FathersName" id='Student_FathersName' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Surname :</label><br />
+                    <input type="text" placeholder="Surname" name="Student_Surname" id='Student_Surname' />
+                  </div>
                 </div>
 
-                <div className='col'>
-                  <label>Father's Name :</label><br />
-                  <input type="text" placeholder="Father's Name" name="Student_FathersName" id='Student_FathersName' />
+
+
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Phone Number :</label><br />
+                    <input type="Number" placeholder="Number" name="Student_Number" id='Student_Surname' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Email :</label><br />
+                    <input type="text" placeholder="Email" onChange={(e) => validateEmail(e)} name="Student_MailID" id='Student_MailID' /><br />
+                    <span style={{ fontWeight: 'bold', color: 'red', }}>{emailError}</span>
+                    {/* <span style={{fontWeight: 'bold', color: 'red',  }}><()=>{if(!(emailError === 'Valid'))return emailError}/></div></span> */}
+                  </div>
+
+                  <div className='col'>
+                    <label>DOB :</label><br />
+                    <input type="text" placeholder="DOB" name="Student_DOB" id='Student_DOB' />
+                  </div>
                 </div>
 
-                <div className='col'>
-                  <label>Surname :</label><br />
-                  <input type="text" placeholder="Surname" name="Student_Surname" id='Student_Surname' />
+
+                <div className='row flex'>
+
+                  <div className='col'>
+                    <label>Gender :</label><br />
+                    <input type="text" placeholder="Gender" name="Student_Gender" id='Student_Gender' />
+                  </div>
+
                 </div>
+
+                <div className='row flex'>
+
+                  <div className='col'>
+                    <label>UserName :</label><br />
+                    <input type="text" onChange={(e)=>onChangeUserNameCheck(e)} placeholder="UserName" name="Student_UserName" id='Student_UserName' />
+                    <div className='ReturnUserNameCheck'><ReturnUserNameCheck/></div>
+                  </div>
+
+                </div>
+
+
+                <div className='row flex'>
+
+                  <div className='col'>
+                    <label>Password :</label><br />
+                    <input type="password" placeholder="Password" name="StudentLogingPassword" id='StudentLogingPassword' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Re-Password :</label><br />
+                    <input type="password" placeholder="Re-Password" name="Re_Password" id='Re_Password' />
+                  </div>
+
+                </div>
+
+
               </div>
 
-
-
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Phone Number :</label><br />
-                  <input type="Number" placeholder="Number" name="Student_Number" id='Student_Surname' />
-                </div>
-
-                <div className='col'>
-                  <label>Email :</label><br />
-                  <input type="text" placeholder="Email" onChange={(e) => validateEmail(e)} name="Student_MailID" id='Student_MailID' /><br />
-                  <span style={{ fontWeight: 'bold', color: 'red', }}>{emailError}</span>
-                  {/* <span style={{fontWeight: 'bold', color: 'red',  }}><()=>{if(!(emailError === 'Valid'))return emailError}/></div></span> */}
-                </div>
-
-                <div className='col'>
-                  <label>DOB :</label><br />
-                  <input type="text" placeholder="DOB" name="Student_DOB" id='Student_DOB' />
-                </div>
-              </div>
-
-
-              <div className='row flex'>
-
-                <div className='col'>
-                  <label>Gender :</label><br />
-                  <input type="text" placeholder="Gender" name="Student_Gender" id='Student_Gender' />
-                </div>
-
-              </div>
-
-
+              {/* <br />
+              <div className='submitButton RegisdivationContent flex'>
+                <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
+              </div> */}
             </div>
-
-            <br />
-            <div className='submitButton RegisdivationContent flex'>
-              <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
-            </div>
-          </form>
-        </div>
+          </div>
 
 
-        <div id="IncomeDetails" className="tabcontent  RegisdivationContent">
-          <form onChange={onSubmit} >
-            <div className='table'>
+          <div id="IncomeDetails" className="tabcontent  RegisdivationContent">
+            <div >
+              <div className='table'>
 
 
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Family Anual Income :</label>
-                  <input type="number" placeholder="Family Anual Income" name="Student_FamilyAnualIncome" id='Student_FamilyAnualIncome' />
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Family Anual Income :</label>
+                    <input type="number" placeholder="Family Anual Income" name="Student_FamilyAnualIncome" id='Student_FamilyAnualIncome' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Do you have a Income Cirtificate :</label><br />
+                    {/* <label htmlFor="Student_IncomeCirtificateYes" style="">Do you have a Income Cirtificate :</label> */}
+                    <input type="radio" id='Student_IncomeCirtificateYes' name="Grp1" value="yes" /> Yes
+                    <input type="radio" name="Grp1" id='Student_IncomeCirtificateNo' value="no" /> No
+                  </div>
                 </div>
 
-                <div className='col'>
-                  <label>Do you have a Income Cirtificate :</label><br />
-                  {/* <label htmlFor="Student_IncomeCirtificateYes" style="">Do you have a Income Cirtificate :</label> */}
-                  <input type="radio" id='Student_IncomeCirtificateYes' name="Grp1" value="yes" /> Yes
-                  <input type="radio" name="Grp1" id='Student_IncomeCirtificateNo' value="no" /> No
-                </div>
-              </div>
 
 
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Income Cirtificate Number :</label><br />
+                    <input type="Number" placeholder="Number" name="Student_IncomeCirtificateNumber" id='Student_IncomeCirtificateNumber' />
+                  </div>
 
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Income Cirtificate Number :</label><br />
-                  <input type="Number" placeholder="Number" name="Student_IncomeCirtificateNumber" id='Student_IncomeCirtificateNumber' />
-                </div>
+                  <div className='col'>
+                    <label>Date Of Issue :</label><br />
+                    <input type="text" placeholder="Date" name="Student_IncomeCirtificateDateOfIssue" id='Student_IncomeCirtificateDateOfIssue' />
+                  </div>
 
-                <div className='col'>
-                  <label>Date Of Issue :</label><br />
-                  <input type="text" placeholder="Date" name="Student_IncomeCirtificateDateOfIssue" id='Student_IncomeCirtificateDateOfIssue' />
-                </div>
+                  <div className='col'>
+                    <label>Upload Income Cirtificate :</label><br />
+                    <input type="file" placeholder="Date" name="Student_IncomeCirtificatefile" id='Student_IncomeCirtificatefile' />
+                  </div>
 
-                <div className='col'>
-                  <label>Upload Income Cirtificate :</label><br />
-                  <input type="file" placeholder="Date" name="Student_IncomeCirtificatefile" id='Student_IncomeCirtificatefile' />
-                </div>
-
-                {/* <div className='col'>
+                  {/* <div className='col'>
                   <label>Email :</label><br />
                   <input type="text" placeholder="Email" onChange={(e) => validateEmail(e)} name="Student_Mail" id='Student_Mail' /><br />
                   <span style={{ fontWeight: 'bold', color: 'red', }}>{emailError}</span>
                   <span style={{fontWeight: 'bold', color: 'red',  }}><()=>{if(!(emailError === 'Valid'))return emailError}/></div></span>
                 </div> */}
 
+                </div>
+                <br /><hr /><br />
+                <label>Bank Details : </label><br /><br />
+                <div className='row flex'>
+
+                  <div className='col'>
+                    <label>Acc No. :</label><br />
+                    <input type="Number" placeholder="Acc No" name="Student_BankAccountNumber" id='Student_BankAccountNumber' />
+                  </div>
+
+                  <div className='col'>
+                    <label>IFSC Code :</label><br />
+                    <input type="text" placeholder="IFSC" name="Student_BankIFSCCode" id='Student_BankIFSCCode' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Branch Name :</label><br />
+                    <input type="text" placeholder="Branch Name" name="Student_BankBranchName" id='Student_BankBranchName' />
+                  </div>
+
+                </div>
+
+
+
               </div>
-              <br /><hr /><br />
-              <label>Bank Details : </label><br /><br />
-              <div className='row flex'>
 
-                <div className='col'>
-                  <label>Acc No. :</label><br />
-                  <input type="Number" placeholder="Acc No" name="Student_BankAccountNumber" id='Student_BankAccountNumber' />
+              {/* <br />
+              <div className='submitButton RegisdivationContent flex'>
+                <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
+              </div> */}
+            </div>
+          </div>
+
+
+          <div id="EducationDetails" className="tabcontent RegisdivationContent">
+            <div >
+              <div className='table'>
+                <label>10th details</label>
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>School Name :</label><br />
+                    <input type="text" placeholder="Name" name="Student_10thSchoolName" id='Student_10thSchoolName' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Passing Year :</label><br />
+                    <input type="text" placeholder="Name" name="Student_10thPassingYear" id='Student_10thPassingYear' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Percentage :</label><br />
+                    <input type="text" placeholder="Percentage" name="Student_10thPercentage" id='Student_10thPercentage' />
+                  </div>
                 </div>
 
-                <div className='col'>
-                  <label>IFSC Code :</label><br />
-                  <input type="text" placeholder="IFSC" name="Student_BankIFSCCode" id='Student_BankIFSCCode' />
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Board :</label><br />
+                    <input type="text" placeholder="Name" name="Student_10thBoard" id='Student_10thBoard' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Marksheet :</label><br />
+                    <input type="file" placeholder="Date" name="Student_10thMarkSheetfile" id='Student_10thMarkSheetfile' />
+                  </div>
+
                 </div>
 
-                <div className='col'>
-                  <label>Branch Name :</label><br />
-                  <input type="text" placeholder="Branch Name" name="Student_BankBranchName" id='Student_BankBranchName' />
+                <hr />
+
+                <label>12th/Diploma details </label>
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>College Name :</label><br />
+                    <input type="text" placeholder="Name" name="Student_12thCollegeName" id='Student_12thCollegeName' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Passing Year :</label><br />
+                    <input type="text" placeholder="Name" name="Student_12thPassingYear" id='Student_12thPassingYear' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Percentage :</label><br />
+                    <input type="text" placeholder="Percentage" name="Student_12thPercentage" id='Student_12thPercentage' />
+                  </div>
                 </div>
+
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Board/Institute :</label><br />
+                    <input type="text" placeholder="Name" name="Student_12thBoard" id='Student_12thBoard' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Marksheet :</label><br />
+                    <input type="file" placeholder="Date" name="Student_10thMarkSheetfile" id='Student_10thMarkSheetfile' />
+                  </div>
+
+                </div>
+
 
               </div>
 
+              {/* <br />
+              <div className='submitButton RegisdivationContent flex'>
+                <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
+              </div> */}
+            </div>
+          </div>
 
+
+
+          <div id='CurrentCourseDetails' className="tabcontent  RegisdivationContent ">
+            <div >
+              <div className='table'>
+
+
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>Admission year in current course :</label><br />
+                    <input type="text" placeholder="Year" name="Student_AdmissionYear" id='Student_AdmissionYear' />
+                  </div>
+
+                  <div className='col'>
+                    <label>stuff :</label><br />
+                    <input type="text" placeholder="Father's Name" name="Student_FathersName" id='Student_FathersName' />
+                  </div>
+
+                </div>
+
+
+
+                <div className='row flex'>
+                  <div className='col'>
+                    <label>College Name :</label><br />
+                    <input type="text" placeholder="Name" name="Student_CollegeName" id='Student_CollegeName' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Course Name :</label><br />
+                    <input type="text" placeholder="Name" name="Student_CourseName" id='Student_CourseName' />
+                  </div>
+
+                  <div className='col'>
+                    <label>Current CGPA :</label><br />
+                    <input type="text" placeholder="CGPA" name="Student_CurrentCGPA" id='Student_CurrentCGPA' />
+                  </div>
+                </div>
+
+
+                <div className='row flex'>
+
+                  <div className='col'>
+                    <label>Year Of Study :</label><br />
+                    <input type="text" placeholder="Year" name="Student_YearOfStudy" id='Student_YearOfStudy' />
+                  </div>
+
+                  <div className='col'>
+                    <label>CET/Merit :</label><br />
+                    <input type="text" placeholder="Marks" name="Student_CET_Merit" id='Student_CET_Merit' />
+                  </div>
+
+                </div>
+                <hr />
+              </div>
+
+              <br />
 
             </div>
+          </div>
 
-            <br />
-            <div className='submitButton RegisdivationContent flex'>
-              <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
+          <div className='RegistrationContentSubmitButton  flex'>
+            <div className='  fex'>
+              <button className=' b1 text-black mx4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
             </div>
-          </form>
-        </div>
-
-
-        <div id="EducationDetails" className="tabcontent RegisdivationContent">
-          <form onChange={onSubmit} >
-            <div className='table'>
-              <label>10th details</label>
-              <div className='row flex'>
-                <div className='col'>
-                  <label>School Name :</label><br />
-                  <input type="text" placeholder="Name" name="Student_10thSchoolName" id='Student_10thSchoolName' />
-                </div>
-
-                <div className='col'>
-                  <label>Passing Year :</label><br />
-                  <input type="text" placeholder="Name" name="Student_10thPassingYear" id='Student_10thPassingYear' />
-                </div>
-
-                <div className='col'>
-                  <label>Percentage :</label><br />
-                  <input type="text" placeholder="Percentage" name="Student_10thPercentage" id='Student_10thPercentage' />
-                </div>
-              </div>
-
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Board :</label><br />
-                  <input type="text" placeholder="Name" name="Student_10thBoard" id='Student_10thBoard' />
-                </div>
-
-                <div className='col'>
-                  <label>Marksheet :</label><br />
-                  <input type="file" placeholder="Date" name="Student_10thMarkSheetfile" id='Student_10thMarkSheetfile' />
-                </div>
-
-              </div>
-
-              <hr />
-
-              <label>12th/Diploma details </label>
-              <div className='row flex'>
-                <div className='col'>
-                  <label>College Name :</label><br />
-                  <input type="text" placeholder="Name" name="Student_12thCollegeName" id='Student_12thCollegeName' />
-                </div>
-
-                <div className='col'>
-                  <label>Passing Year :</label><br />
-                  <input type="text" placeholder="Name" name="Student_12thPassingYear" id='Student_12thPassingYear' />
-                </div>
-
-                <div className='col'>
-                  <label>Percentage :</label><br />
-                  <input type="text" placeholder="Percentage" name="Student_12thPercentage" id='Student_12thPercentage' />
-                </div>
-              </div>
-
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Board/Institute :</label><br />
-                  <input type="text" placeholder="Name" name="Student_12thBoard" id='Student_12thBoard' />
-                </div>
-
-                <div className='col'>
-                  <label>Marksheet :</label><br />
-                  <input type="file" placeholder="Date" name="Student_10thMarkSheetfile" id='Student_10thMarkSheetfile' />
-                </div>
-
-              </div>
-
-
-            </div>
-
-            <br />
-            <div className='submitButton RegisdivationContent flex'>
-              <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
-            </div>
-          </form>
-        </div>
-
-
-
-        <div id='CurrentCourseDetails' className="tabcontent  RegisdivationContent ">
-          <form onChange={onSubmit} >
-            <div className='table'>
-
-
-              <div className='row flex'>
-                <div className='col'>
-                  <label>Admission year in current course :</label><br />
-                  <input type="text" placeholder="Year" name="Student_AdmissionYear" id='Student_AdmissionYear' />
-                </div>
-
-                <div className='col'>
-                  <label>stuff :</label><br />
-                  <input type="text" placeholder="Father's Name" name="Student_FathersName" id='Student_FathersName' />
-                </div>
-
-              </div>
-
-
-
-              <div className='row flex'>
-                <div className='col'>
-                  <label>College Name :</label><br />
-                  <input type="text" placeholder="Name" name="Student_CollegeName" id='Student_CollegeName' />
-                </div>
-
-                <div className='col'>
-                  <label>Course Name :</label><br />
-                  <input type="text" placeholder="Name" name="Student_CourseName" id='Student_CourseName' />
-                </div>
-
-                <div className='col'>
-                  <label>Current CGPA :</label><br />
-                  <input type="text" placeholder="CGPA" name="Student_CurrentCGPA" id='Student_CurrentCGPA' />
-                </div>
-              </div>
-
-
-              <div className='row flex'>
-
-                <div className='col'>
-                  <label>Year Of Study :</label><br />
-                  <input type="text" placeholder="Year" name="Student_YearOfStudy " id='Student_YearOfStudy' />
-                </div>
-
-                <div className='col'>
-                  <label>CET/Merit :</label><br />
-                  <input type="text" placeholder="Marks" name="Student_CET_Merit" id='Student_CET_Merit' />
-                </div>
-
-              </div>
-              <hr />
-            </div>
-
-            <br />
-            <div className='submitButton RegisdivationContent flex'>
-              <button className=' b1 text-black mx-4 border-[5px] pt-2 pb-2 pl-6 pr-6 border-[red] hover:bg-[#3d4f7c] rounded-full cursor-pointer' type='submit' >Submit</button>
-            </div>
-
-          </form>
-        </div>
+          </div>
+        </form>
 
 
 
@@ -455,6 +559,6 @@ export default function StudentRegisdivation() {
 
 
 
-    </section>
+    </section >
   )
 }

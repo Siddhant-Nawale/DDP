@@ -10,3 +10,9 @@ npm install --save @fortawesome/react-fontawesome @fortawesome/fontawesome-svg-c
 
 
 npm install validator
+
+npm i axios
+
+
+
+npm install react-router-dom@6
