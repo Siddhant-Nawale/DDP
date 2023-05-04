@@ -497,7 +497,7 @@ a.instagram {
 /*/////////////// Section 6 end ////////////////////*/
 
 
-/*/////////////// StuReg_Section1   ////////////////////*/
+/*/////////////// Registration_Section1   ////////////////////*/
 .StuReg_Section1{
 	min-height: 70vh;
 	padding-top: 10vh;
@@ -669,7 +669,10 @@ h1 {
 .ReturnUserNameCheck{
 	color: red;
 }
-/*/////////////// StuReg_Section1 end ////////////////////*/
+.mainformCompanyRegistration{
+	border: 1px solid #ccc;
+}
+/*/////////////// Reg_Section1 end ////////////////////*/
 
 
 

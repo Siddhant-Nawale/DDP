@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import './SecondaryCSS.css';
 import { addDoc, getDocs, collection, query, where } from "@firebase/firestore"
+import { getStorage, ref, uploadBytesResumable } from 'firebase/storage'
+import { useNavigate } from 'react-router-dom';
+
 import { firestore } from "./firebase_setup"
 
 // import { HiMenuAlt4 } from "react-icons/";
@@ -15,6 +18,7 @@ import validator from 'validator'
 
 
 export default function StudentRegistration() {
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo({ top: 0 })
@@ -48,13 +52,13 @@ export default function StudentRegistration() {
     Student_10thPassingYear: '',
     Student_10thPercentage: '',
     Student_10thBoard: '',
-    // Student_10thMarkSheetfile: '',
+    Student_10thMarkSheetfile: '',
 
     Student_12thCollegeName: '',
     Student_12thPassingYear: '',
     Student_12thPercentage: '',
     Student_12thBoard: '',
-    // Student_10thMarkSheetfile: '',
+    Student_12thMarkSheetfile: '',
 
     Student_AdmissionYear: '',
     Student_FathersName: '',
@@ -84,42 +88,61 @@ export default function StudentRegistration() {
 
   const Handleonchange = async (e) => {
     e.preventDefault();
-
-
-
-
-    setStudentdetials({
-      ...Studentdetials, [e.target.name]: e.target.value
-    })
+    if(!(e.target.type == "file")){
+      setStudentdetials({
+        ...Studentdetials, [e.target.name]: e.target.value
+      })
+      }
+      else{
+        setStudentdetials({
+          ...Studentdetials, [e.target.name]: e.target.files[0]
+        })
+      }
     // console.log(Studentdetials)
     // return false;
   }
 
-  const handlesubmit = (e) => {
+  const handlesubmit = async (e) => {
     e.preventDefault();
 
     const isStudentDetailsValid = Object.values(Studentdetials).every(val => val !== '');
     // console.log(isStudentDetailsValid , userNameCheck);
     // console.log((isStudentDetailsValid && userNameCheck));
-    if (isStudentDetailsValid && !userNameCheck) {
+    // if (isStudentDetailsValid && !userNameCheck) {
+      if (!isStudentDetailsValid) {
       const refreg = collection(firestore, "StudentData") 
       // const docRef = doc(firestore, "StudentData", "sid");
-      const reflogin = collection(firestore, "StudentData")
-      let dataReg =
-        Studentdetials
+      const reflogin = collection(firestore, "LoginCred")
+      let { Student_IncomeCirtificatefile,Student_10thMarkSheetfile,Student_12thMarkSheetfile, ...dataReg } = Studentdetials; 
+
+      // let dataReg =
+      //   Studentdetials
 
       let datalogin =
-        {Student_UserName:'',
-        StudentLogingPassword:''
-      // UserType:''
+        {UserName:'',
+        Password:'',
+      UserType:'Student'
     }
-    datalogin.Student_UserName = Studentdetials.Student_UserName
-    datalogin.StudentLogingPassword = Studentdetials.StudentLogingPassword
+    datalogin.UserName = Studentdetials.Student_UserName
+    datalogin.Password = Studentdetials.StudentLogingPassword
+    const storage = getStorage();
 
-      console.log(data)
+      // console.log(data)
       try {
-        addDoc(refreg, dataReg)
+        const newDocRef = await addDoc(refreg, dataReg)
+        let storageRef = ref(storage, `/files_Student/${newDocRef.id}_${Studentdetials.Student_UserName}/IncomeCirtificatefile`);
+        await uploadBytesResumable(storageRef, Student_IncomeCirtificatefile);
+
+        
+        storageRef = ref(storage, `/files_Student/${newDocRef.id}_${Studentdetials.Student_UserName}/10thMarkSheetfile`);
+        await uploadBytesResumable(storageRef, Student_10thMarkSheetfile);
+
+        storageRef = ref(storage, `/files_Student/${newDocRef.id}_${Studentdetials.Student_UserName}/12thMarkSheetfile`);
+        await uploadBytesResumable(storageRef, Student_12thMarkSheetfile);
+
         addDoc(reflogin, datalogin)
+        navigate('/Login');
+
       } catch (err) {
         console.log(err)
       }
@@ -466,7 +489,7 @@ export default function StudentRegistration() {
 
                   <div className='col'>
                     <label>Marksheet :</label><br />
-                    <input type="file" placeholder="Date" name="Student_10thMarkSheetfile" id='Student_10thMarkSheetfile' />
+                    <input type="file" placeholder="Date" name="Student_12thMarkSheetfile" id='Student_12thMarkSheetfile' />
                   </div>
 
                 </div>

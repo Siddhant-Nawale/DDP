@@ -14,6 +14,7 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import StudentRegistration from './pages/StudentRegistration'
+import CompanyRegistration from './pages/CompanyRegistration'
 import StuDashboard from './pages/StuDashboard'
 import StudentUpdateData from './pages/Student_UpdateData'
 
@@ -46,6 +47,9 @@ function App() {
           />
           <Route exact path="/StudentUpdateData"  element=
             {<StudentUpdateData useScrollToTop={useScrollToTop} />}
+          />
+<Route exact path="/CompanyRegistration" element=
+            {<CompanyRegistration useScrollToTop={useScrollToTop} />}
           />
           <Route exact path="/invokecsr"  element=
             {<Invokecsr useScrollToTop={useScrollToTop} />}
